@@ -148,9 +148,7 @@ class XDeepFMModel(BaseModel):
             )
             return fm_output
 
-    def _build_CIN(
-        self, nn_input, res=False, direct=False, bias=False, is_masked=False
-    ):
+    def _build_CIN(self, nn_input, res=False, direct=False, bias=False, is_masked=False):
         """Construct the compressed interaction network.
         This component provides explicit and vector-wise higher-order feature interactions.
         

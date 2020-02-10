@@ -18,10 +18,10 @@ model:
     dropout : [0.0, 0.0]  #drop out values for DNN layer
     cross_layer_sizes : [1]  # layers' size for CIN.
     cross_activation : 'identity' # activation function for CIN
-    use_Linear_part : False 
-    use_FM_part : False
+    use_Linear_part : True 
+    use_FM_part : True
     use_CIN_part: True 
-    use_DNN_part: False
+    use_DNN_part: True
 
 
 #train
