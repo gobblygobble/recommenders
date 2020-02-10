@@ -1,8 +1,6 @@
 import sys
-#sys.path.append("./")
 import os
 import papermill as pm
-from tempfile import TemporaryDirectory
 
 import tensorflow as tf
 
@@ -16,17 +14,12 @@ from reco_utils.recommender.deeprec.IO.iterator import FFMTextIterator
 print("System version: {}".format(sys.version))
 print("Tensorflow version: {}".format(tf.__version__))
 
-tmpdir = TemporaryDirectory()
-
 # synthetic run parameters
 EPOCHS = 15
 BATCH_SIZE = 128
-# criteo run parameters
-#EPOCHS = 30
-#BATCH_SIZE = 30
 RANDOM_SEED = SEED
 
-data_path = tmpdir.name
+data_path = "data-for-xDeepFM/"
 yaml_file = os.path.join(data_path, r'xDeepFM.yaml')
 train_file = os.path.join(data_path, r'synthetic_part_0')
 valid_file = os.path.join(data_path, r'synthetic_part_1')
@@ -71,5 +64,3 @@ print("Trained model's performance: {}".format(res_syn))
 pm.record("rest_syn", res_syn)
 # we can also get full prediction scores rather than evaluation metrics with model.predict(test_file, output_file)
 
-# cleanup
-tmpdir.cleanup()
