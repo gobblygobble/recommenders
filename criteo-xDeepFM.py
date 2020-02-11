@@ -11,8 +11,8 @@ from reco_utils.recommender.deeprec.deeprec_utils import (
 from reco_utils.recommender.deeprec.models.xDeepFM import XDeepFMModel
 from reco_utils.recommender.deeprec.IO.iterator import FFMTextIterator
 
-print("System version: {}".format(sys.version))
-print("Tensorflow version: {}".format(tf.__version__))
+# profiling
+import timeliner
 
 # criteo run parameters
 EPOCHS = 30
@@ -45,10 +45,14 @@ hparams = prepare_hparams(yaml_file,
                           use_CIN_part=True, 
                           use_DNN_part=True)
 
+# make model
 model = XDeepFMModel(hparams, FFMTextIterator, seed=RANDOM_SEED)
+
 
 # train model
 model.fit(train_file, valid_file)
+# profiling
+model.train_timeliner.save('xDeepFM-timeliner.json')
 
 # inference after training
 #print(model.run_eval(test_file))

@@ -9,6 +9,9 @@ import tensorflow as tf
 from tensorflow import keras
 from reco_utils.recommender.deeprec.deeprec_utils import cal_metric
 
+# for profiling
+from tensorflow.python.client import timeline
+import timeliner
 
 __all__ = ["BaseModel"]
 
@@ -24,6 +27,12 @@ class BaseModel:
             graph (obj): An optional graph.
             seed (int): Random seed.
         """
+
+        # profiling
+        self.options = tf.RunOptions(trace_level=tf.RunOptions.FULL_TRACE)
+        self.run_metadata = tf.RunMetadata()
+        self.train_timeliner = timeliner.TimeLiner()
+
         self.seed = seed
         tf.set_random_seed(seed)
         np.random.seed(seed)
@@ -333,7 +342,8 @@ class BaseModel:
         """
         feed_dict[self.layer_keeps] = self.keep_prob_train
         feed_dict[self.is_train_stage] = True
-        return sess.run(
+        
+        retval = sess.run(
             [
                 self.update,
                 self.extra_update_ops,
@@ -342,7 +352,16 @@ class BaseModel:
                 self.merged,
             ],
             feed_dict=feed_dict,
+            # for profiling
+            options=self.options,
+            run_metadata=self.run_metadata
         )
+        # for profiling
+        fetched_timeline = timeline.Timeline(self.run_metadata.step_stats)
+        chrome_trace = fetched_timeline.generate_chrome_trace_format()
+        self.train_timeliner.update_timeline(chrome_trace)
+        # return the session run value
+        return retval
 
     def eval(self, sess, feed_dict):
         """Evaluate the data in feed_dict with current model.
